@@ -92,8 +92,8 @@ class SegmentTree {
         }
     }
 
-    typename vector<T>::iterator begin() { return tree.begin() + n - 1; }
-    typename vector<T>::iterator end() { return tree.end(); }
+    auto begin() { return tree.begin() + n - 1; }
+    auto end() { return tree.end(); }
 
     T operator[](int i) { return tree[ (size_t)(i + n - 1) ]; }
 };
@@ -117,4 +117,6 @@ int main() {
         if (com) cout << sg.query(x, y+1) << '\n';
         else sg.update(x, y);
     }
+    for (auto &si:sg) cout << si << '\n';
+    return 0;
 }
