@@ -7,6 +7,7 @@ Mainly used for [competitive programming](https://en.wikipedia.org/wiki/Competit
 
 #### binary_indexed_tree.cpp
 Binary Indexed Tree(BIT), also known as Fenwick Tree.
+
 It achives O(logN) complexity for [Range Sum Query](http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=DSL_2_B&lang=jp).
 
 #### coordinate_compression.cpp
@@ -16,7 +17,8 @@ Coordinate Compression, a commonly used technique which is to map larger values 
 Doubling, also a commonly  used technique similar to [pointer jumping](https://en.wikipedia.org/wiki/Pointer_jumping).
 
 #### segment_tree.cpp
-[Segment Tree](https://en.wikipedia.org/wiki/Segment_tree)
+[Segment Tree](https://en.wikipedia.org/wiki/Segment_tree), also used for [Range Sum Query](http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=DSL_2_B&lang=jp).
+
 There is no lazy version yet, but I'm working on it.
 
 #### union_find_tree.cpp
