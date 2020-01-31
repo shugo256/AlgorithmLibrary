@@ -37,7 +37,7 @@ Trying to make a comprehensive graph class which has all the graph algorithms I'
 [Krucsal's algorithm](https://en.wikipedia.org/wiki/Kruskal%27s_algorithm)
 
 ### shortest_path.cpp
-3 shortest path finding algorithms.
+Set of 3 shortest path finding algorithms.
 * [Dijkstra's algorithm](https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm)
 * [Bellman-Ford algorithm](https://en.wikipedia.org/wiki/Bellman%E2%80%93Ford_algorithm)
 * [Warshall-Floyd algorithm](https://en.wikipedia.org/wiki/Floyd%E2%80%93Warshall_algorithm)
