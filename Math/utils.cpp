@@ -52,14 +52,3 @@ long powi(int x, int n) {
         else return xn*xn*x;
     }
 }
-
-// 素数判定 2からfor分で回して行く limitはどこまでやるか エラトステネスの篩
-bool isPrime[100011];
-void computePrimes(int limit = 100010) {
-    assert(limit < 100011);                    // #include <cassert>
-    fill(isPrime, isPrime + limit + 1, true);  //最初全部trueにしておく
-    isPrime[0] = isPrime[1] = false;
-    for (int i = 2; i <= limit; i++)
-        if (isPrime[i])
-            for (int j = 2 * i; j <= limit; j += i) isPrime[j] = false;
-}

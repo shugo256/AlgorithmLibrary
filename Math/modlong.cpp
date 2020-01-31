@@ -72,6 +72,7 @@ public:
         return n * invs[q.val];
     }
     modlong operator/(const modlong &r) { return *this * modlong(r).inv(); }
+    modlong operator%(const modlong &r) { return modlong(this->val % r.val); }
 
     // ++ -- 前付きと後ろ付き
     void operator++() { ++this->val; }
@@ -90,6 +91,7 @@ public:
     void operator-=(const modlong &r) { *this = *this - r; }
     void operator*=(const modlong &r) { *this = *this * r; }
     void operator/=(const modlong &r) { *this = *this / r; }
+    void operator%=(const modlong &r) { *this = *this % r; }
 
     // べき乗
     modlong pow(long n) {
