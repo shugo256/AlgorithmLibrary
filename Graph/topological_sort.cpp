@@ -10,6 +10,8 @@ https://atcoder.jp/contests/tenka1-2016-quala/submissions/7307354
 #include <queue>
 #include <vector>
 
+using namespace std;
+
 #define MAX_N 1000010
 // トポロジカルソートしつつ閉路検出 O(V+E)
 vector<int> G[MAX_N], // 隣接行列
