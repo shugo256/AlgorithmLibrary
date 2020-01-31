@@ -31,7 +31,7 @@ Union Find Tree, also known as [disjoint-set data structure](https://en.wikipedi
 [Ford-Fulkerson algorithm](https://en.wikipedia.org/wiki/Ford%E2%80%93Fulkerson_algorithm)
 
 ### graph.cpp
-Trying to make a comprehensive graph class which I've implemented, but I'm still working on it.
+Trying to make a comprehensive graph class which has all the graph algorithms I've implemented, but I'm still working on it.
 
 ### kruscal.cpp
 [Krucsal's algorithm](https://en.wikipedia.org/wiki/Kruskal%27s_algorithm)
