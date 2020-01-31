@@ -52,5 +52,8 @@ Set of 3 shortest path finding algorithms.
 ### modlong.cpp
 `modlong` is a integer type that applies `% MOD` after every opperation(+ - * / pow comb fact).
 
+### prime_factorization.cpp
+[Prime Factorization](https://en.wikipedia.org/wiki/Integer_factorization)
+
 ### utils.cpp
 Math utility functions such as `gcd` and `lcm`.
