@@ -1,7 +1,12 @@
 /*
 verified on 2020/2/3
 https://atcoder.jp/contests/ddcc2020-final/submissions/9880042
+
+found a bug on input "bacacab", "babab" -> verified on 2020/2/4
+https://atcoder.jp/contests/s8pc-2/submissions/9890996
 */
+
+// 参考 : https://mametter.hatenablog.com/entry/20180130/p1
 
 #include <iostream>
 #include <vector>
@@ -117,9 +122,9 @@ private:
             // sa-isを再帰的に用いる
             SuffixArray<size_t> next(next_s, n+1);
 
-            for (size_t i=0; i<lmslen-1; i++)
-                lms[i] = aligned[(size_t)next[lmslen-1-i]];
-            lms[lmslen-1] = len;
+            for (size_t i=1; i<lmslen; i++)
+                lms[i] = aligned[(size_t)next[i]];
+            lms[0] = len;
         } else {
             for (auto i:aligned) 
                 sa[i] = 0; // saを0リセット
@@ -132,6 +137,8 @@ private:
 
     // induced sortの3ステップを行う
     void induced_sort() {
+
+        reverse(lms.begin(), lms.end());
 
         // step1:LMSをひとまず書き込んでいく
         for (auto i:lms) {
