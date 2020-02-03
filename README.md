@@ -19,6 +19,9 @@ Doubling, also a commonly  used technique similar to [pointer jumping](https://e
 
 There is no lazy version yet, but I'm working on it.
 
+### suffix_array.cpp
+Constructs a [Suffix Array](https://en.wikipedia.org/wiki/Suffix_array) with O(n) complexity by using the [SA-IS](https://github.com/vladtepes1473/FM-Index/blob/master/readings/Linear%20Suffix%20Array%20Construction%20by%20Almost%20Pure%20Induced-Sorting.pdf) algorithm.
+
 ### union_find_tree.cpp
 Union Find Tree, also known as [disjoint-set data structure](https://en.wikipedia.org/wiki/Disjoint-set_data_structure)
 
