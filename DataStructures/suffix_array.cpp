@@ -2,7 +2,7 @@
 verified on 2020/2/3
 https://atcoder.jp/contests/ddcc2020-final/submissions/9880042
 
-found a bug on input "bacacab", "babab" -> verified on 2020/2/4
+found a bug on input "bacacab", "babab" -> fixed and verified on 2020/2/4
 https://atcoder.jp/contests/s8pc-2/submissions/9890996
 */
 
@@ -138,7 +138,7 @@ private:
     // induced sortの3ステップを行う
     void induced_sort() {
 
-        reverse(lms.begin(), lms.end());
+        reverse(lms.begin(), lms.end()); // binの後ろから入れていくので、逆向きにしておく
 
         // step1:LMSをひとまず書き込んでいく
         for (auto i:lms) {
