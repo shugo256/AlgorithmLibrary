@@ -3,9 +3,7 @@ Mainly used for [competitive programming](https://en.wikipedia.org/wiki/Competit
 
 ## DataStructures
 
-* **binary_indexed_tree.cpp** : Binary Indexed Tree(BIT), also known as Fenwick Tree.
-
-It achives O(logN) time complexity for [Range Sum Query](http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=DSL_2_B&lang=jp).
+* **binary_indexed_tree.cpp** : Binary Indexed Tree(BIT), also known as Fenwick Tree. It achives O(logN) time complexity for [Range Sum Query](http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=DSL_2_B&lang=jp).
 
 * **coordinate_compression.cpp** : Coordinate Compression, a commonly used technique which is to map larger values to smaller distinct values.
 
