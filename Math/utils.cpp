@@ -44,10 +44,11 @@ int partition(int n, int sum) {
 }
 
 // べき乗 powのint高速化ver
-long powi(int x, int n) {
+template <typename T>
+T powi(T x, int n) {
     if (n <= 0) return 1;
     else {
-        long xn = powi(x, n/2);
+        T xn = powi(x, n/2);
         if (n%2 == 0) return xn*xn;
         else return xn*xn*x;
     }
