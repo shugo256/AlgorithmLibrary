@@ -1,10 +1,18 @@
+/*
+verified on 2020/2/4
+http://judge.u-aizu.ac.jp/onlinejudge/review.jsp?rid=4155361
+*/
+#include <iostream>
+
+using namespace std;
+
+/* snippet starts */
+
 #include <cassert>
-#define MOD (long)(1e9 + 7)
 #define MAX 2000000  // 階乗をいくつまで計算するか
 
 class modlong {
     long val;
-    static const long mod = MOD;
     static long *invs, *facts, *finvs;
 
     // 階乗, 逆元, 階乗の逆元をMAXまで求める
@@ -21,12 +29,14 @@ class modlong {
     }
 
 public:
+    static long MOD; // modの元
+
     // 初期化 値を引数に与えなかった場合はval=0としておく
     modlong(long init = 0) : val(init) {
         static bool call_once = initModlong(); // static変数の性質により一度だけ呼ばれる
         assert(call_once); // unusedの回避
-        if (val < 0 || val >= mod) val %= mod;
-        if (val < 0) val += mod;   // 0以上であることを保証
+        if (val < 0 || val >= MOD) val %= MOD;
+        if (val < 0) val += MOD;   // 0以上であることを保証
     }
 
     // longへのキャスト operator long()で定義すると modlong +
@@ -40,11 +50,11 @@ public:
     // 足し算; 符号反転; 引き算
     modlong operator+(const modlong &r) {
         long ans = this->val + r.val;
-        if (ans >= mod) ans -= mod;
+        if (ans >= MOD) ans -= MOD;
         return modlong(ans);
     }
     modlong operator-() {
-        long ans = mod - this->val;
+        long ans = MOD - this->val;
         return modlong(ans);
     }
     modlong operator-(const modlong &r) {
@@ -62,7 +72,7 @@ public:
         if (*this == 1) return modlong(1);
 
         modlong p, q = *this, m(0), n(1), r, c;
-        p.val = mod;  // p=modとかくとp.val=mod%mod=0となってしまう
+        p.val = MOD;  // p=modとかくとp.val=mod%mod=0となってしまう
         while (q > MAX) {
             r = p.val % q.val;  // r.val=p.val % q.val
                                 // とかくよりもこのほうが代入時に%modされるので安全
@@ -149,7 +159,7 @@ ostream &operator<<(ostream &os, const modlong &out) {
 istream &operator>>(istream &is, modlong &in) {
     long inl;
     is >> inl;
-    in.val = inl % MOD;
+    in.val = inl % modlong::MOD;
     return is;
 }
 
@@ -162,3 +172,13 @@ inline modlong modFact(long n) { return modlong(n).fact(); }
 long *modlong::invs  = new long[MAX+1],
      *modlong::facts = new long[MAX+1],
      *modlong::finvs = new long[MAX+1];
+
+long modlong::MOD = (long)1e9 + 7;
+
+/* snippet ends */
+
+int main() {
+    modlong m, n;
+    cin >> m >> n;
+    cout << m.pow(n) << '\n';
+}
