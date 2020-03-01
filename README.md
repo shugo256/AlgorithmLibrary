@@ -25,10 +25,11 @@ Mainly used for [competitive programming](https://en.wikipedia.org/wiki/Competit
 
 * **kruscal.cpp** : [Krucsal's algorithm](https://en.wikipedia.org/wiki/Kruskal%27s_algorithm)
 
-* **shortest_path.cpp** : Set of 3 shortest path finding algorithms.
-  * [Dijkstra's algorithm](https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm)
-  * [Bellman-Ford algorithm](https://en.wikipedia.org/wiki/Bellman%E2%80%93Ford_algorithm)
-  * [Warshall-Floyd algorithm](https://en.wikipedia.org/wiki/Floyd%E2%80%93Warshall_algorithm)
+* **dijkstra.cpp** : [Dijkstra's algorithm](https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm)
+
+* **bellman_ford.cpp** : [Bellman-Ford algorithm](https://en.wikipedia.org/wiki/Bellman%E2%80%93Ford_algorithm)
+
+* **warshall_floyd.cpp** : [Warshall-Floyd algorithm](https://en.wikipedia.org/wiki/Floyd%E2%80%93Warshall_algorithm)
 
 * **topological_sort.cpp** : [Topological sorting](https://en.wikipedia.org/wiki/Topological_sorting) for [DAGs](https://en.wikipedia.org/wiki/Directed_acyclic_graph).
 
