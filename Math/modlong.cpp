@@ -6,25 +6,42 @@ http://judge.u-aizu.ac.jp/onlinejudge/review.jsp?rid=4155361
 
 using namespace std;
 
+using ll = long long;
+
 /* snippet starts */
 
 #include <cassert>
 #define MAX 2000000  // 階乗をいくつまで計算するか
 
+
 class modlong {
     long val;
-    static long *invs, *facts, *finvs;
 
     // 階乗, 逆元, 階乗の逆元をMAXまで求める
-    bool initModlong() {
-        invs[1] = 
-        facts[0] = facts[1] =
-        finvs[0] = finvs[1] = 1;
-        for (int i=2; i<=MAX; i++) {
-            invs[i]  = -invs[MOD % i] * (MOD / i) % MOD;
-            facts[i] = facts[i - 1] * i % MOD;
-            finvs[i] = finvs[i - 1] * invs[i] % MOD;
+    template<int N, int MOD>
+    struct ModlongInitializer {
+        ll invs[N+1], facts[N+1], finvs[N+1];
+        constexpr ModlongInitializer() : invs(), facts(), finvs() {
+            invs[1] = 
+            facts[0] = facts[1] =
+            finvs[0] = finvs[1] = 1;
+            for (int i=2; i<=N; i++) {
+                invs[i]  = -invs[MOD % i] * (MOD / i) % MOD;
+                facts[i] = facts[i - 1] * i % MOD;
+                finvs[i] = finvs[i - 1] * invs[i] % MOD;
+            }
         }
+    };
+
+    inline static ll const *invs;
+    inline static ll const *facts;
+    inline static ll const *finvs;
+
+    bool initModlong() {
+        constexpr auto initer = ModlongInitializer<MAX, 1000000007>();
+        invs  = initer.invs;
+        facts = initer.facts;
+        finvs = initer.finvs;
         return true;
     }
 
@@ -33,8 +50,7 @@ public:
 
     // 初期化 値を引数に与えなかった場合はval=0としておく
     modlong(long init = 0) : val(init) {
-        static bool call_once = initModlong(); // static変数の性質により一度だけ呼ばれる
-        assert(call_once); // unusedの回避
+        static bool call_once = initModlong();
         if (val < 0 || val >= MOD) val %= MOD;
         if (val < 0) val += MOD;   // 0以上であることを保証
     }
@@ -168,10 +184,10 @@ inline modlong modComb(long n, long k) { return modlong(n).comb(k); }
 // 階乗
 inline modlong modFact(long n) { return modlong(n).fact(); }
 
-// static変数たち
-long *modlong::invs  = new long[MAX+1],
-     *modlong::facts = new long[MAX+1],
-     *modlong::finvs = new long[MAX+1];
+// // static変数たち
+// long *modlong::invs  = new long[MAX+1],
+//      *modlong::facts = new long[MAX+1],
+//      *modlong::finvs = new long[MAX+1];
 
 long modlong::MOD = (long)1e9 + 7;
 
@@ -181,4 +197,5 @@ int main() {
     modlong m, n;
     cin >> m >> n;
     cout << m.pow(n) << '\n';
+    cout << m.comb(n) << '\n';
 }
