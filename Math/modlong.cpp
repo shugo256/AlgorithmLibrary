@@ -34,7 +34,7 @@ public:
     static ll MOD; // modの元
 
     // 初期化 値を引数に与えなかった場合はval=0としておく
-    modlong(long init = 0) : val(init) {
+    modlong(ll init = 0) : val(init) {
         static bool call_once = initModlong(); // static変数の性質により一度だけ呼ばれる
         assert(call_once); // unusedの回避
         if (val < 0 || val >= MOD) val %= MOD;
@@ -155,16 +155,16 @@ public:
 };
 
 // コンビネーション
-inline modlong modComb(long n, ll k) { return modlong(n).comb(k); }
+inline modlong modComb(ll n, ll k) { return modlong(n).comb(k); }
 // 階乗
-inline modlong modFact(long n) { return modlong(n).fact(); }
+inline modlong modFact(ll n) { return modlong(n).fact(); }
 
 // static変数たち c++17ならinlineでかけるのでclassの中に入れられる(https://ja.cppreference.com/w/cpp/language/static)
 ll *modlong::invs  = new ll[MAX+1];
 ll *modlong::facts = new ll[MAX+1];
 ll *modlong::finvs = new ll[MAX+1];
 
-ll modlong::MOD = (long)1e9 + 7;
+ll modlong::MOD = (ll)1e9 + 7;
 
 /* snippet ends */
 
