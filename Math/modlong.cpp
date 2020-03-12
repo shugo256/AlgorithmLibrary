@@ -1,10 +1,12 @@
 /*
-verified on 2020/2/4
-http://judge.u-aizu.ac.jp/onlinejudge/review.jsp?rid=4155361
+verified on 2020/3/12
+http://judge.u-aizu.ac.jp/onlinejudge/review.jsp?rid=4256490
 */
 #include <iostream>
 
 using namespace std;
+
+using ll = long long;
 
 /* snippet starts */
 
@@ -12,8 +14,8 @@ using namespace std;
 #define MAX 2000000  // 階乗をいくつまで計算するか
 
 class modlong {
-    long val;
-    static long *invs, *facts, *finvs;
+    ll val;
+    static ll *invs, *facts, *finvs;
 
     // 階乗, 逆元, 階乗の逆元をMAXまで求める
     bool initModlong() {
@@ -29,7 +31,7 @@ class modlong {
     }
 
 public:
-    static long MOD; // modの元
+    static ll MOD; // modの元
 
     // 初期化 値を引数に与えなかった場合はval=0としておく
     modlong(long init = 0) : val(init) {
@@ -39,22 +41,22 @@ public:
         if (val < 0) val += MOD;   // 0以上であることを保証
     }
 
-    // longへのキャスト operator long()で定義すると modlong +
-    // longとかができなくなる
-    inline long tol() { return this->val; }
+    // llへのキャスト operator ll()で定義すると modlong +
+    // llとかができなくなる
+    inline ll toll() { return this->val; }
 
     // 代入
     void operator=(const modlong &r) { this->val = r.val; }
-    void operator=(const long &r) { *this = modlong(r); }
+    void operator=(const ll &r) { *this = modlong(r); }
 
     // 足し算; 符号反転; 引き算
     modlong operator+(const modlong &r) {
-        long ans = this->val + r.val;
+        ll ans = this->val + r.val;
         if (ans >= MOD) ans -= MOD;
         return modlong(ans);
     }
     modlong operator-() {
-        long ans = MOD - this->val;
+        ll ans = MOD - this->val;
         return modlong(ans);
     }
     modlong operator-(const modlong &r) {
@@ -64,7 +66,7 @@ public:
 
     //かけ算; 逆元; わり算
     modlong operator*(const modlong &r) {
-        long ans = this->val * r.val;
+        ll ans = this->val * r.val;
         return modlong(ans);
     }
     modlong inv() {
@@ -121,7 +123,7 @@ public:
     // コンビネーション
     modlong comb(modlong _k) {
         assert(this->val <= MAX);
-        const long n = this->val, k = _k.val;
+        const ll n = this->val, k = _k.val;
         if (k < 0 || k > n) return 0;
         if (k == 0 || k == n) return 1;
         return modlong(facts[n]) * finvs[k] * finvs[n - k];
@@ -133,47 +135,36 @@ public:
         return modlong(facts[this->val]);
     }
 
-    friend bool operator<(const modlong &l, const modlong &r);
-    friend bool operator>(const modlong &l, const modlong &r);
-    friend bool operator==(const modlong &l, const modlong &r);
-    friend bool operator!=(const modlong &l, const modlong &r);
-    friend bool operator<=(const modlong &l, const modlong &r);
-    friend bool operator>=(const modlong &l, const modlong &r);
-    friend ostream &operator<<(ostream &os, const modlong &out);
-    friend istream &operator>>(istream &is, modlong &out);
+    friend bool operator<(const modlong &l, const modlong &r) { return l.val < r.val; }
+    friend bool operator>(const modlong &l, const modlong &r) { return l.val > r.val; }
+    friend bool operator==(const modlong &l, const modlong &r) { return l.val == r.val; }
+    friend bool operator!=(const modlong &l, const modlong &r) { return !(l == r); }
+    friend bool operator<=(const modlong &l, const modlong &r) { return !(l > r); }
+    friend bool operator>=(const modlong &l, const modlong &r) { return !(l < r); }
+
+    friend ostream &operator<<(ostream &os, const modlong &out) {
+        os << out.val;
+        return os;
+    }
+    friend istream &operator>>(istream &is, modlong &in) {
+        ll inl;
+        is >> inl;
+        in.val = inl % modlong::MOD;
+        return is;
+    }
 };
 
-//比較
-bool operator<(const modlong &l, const modlong &r) { return l.val < r.val; }
-bool operator>(const modlong &l, const modlong &r) { return l.val > r.val; }
-bool operator==(const modlong &l, const modlong &r) { return l.val == r.val; }
-bool operator!=(const modlong &l, const modlong &r) { return !(l == r); }
-bool operator<=(const modlong &l, const modlong &r) { return !(l > r); }
-bool operator>=(const modlong &l, const modlong &r) { return !(l < r); }
-
-// cout、cerr、cin用の演算子たち
-ostream &operator<<(ostream &os, const modlong &out) {
-    os << out.val;
-    return os;
-}
-istream &operator>>(istream &is, modlong &in) {
-    long inl;
-    is >> inl;
-    in.val = inl % modlong::MOD;
-    return is;
-}
-
 // コンビネーション
-inline modlong modComb(long n, long k) { return modlong(n).comb(k); }
+inline modlong modComb(long n, ll k) { return modlong(n).comb(k); }
 // 階乗
 inline modlong modFact(long n) { return modlong(n).fact(); }
 
-// static変数たち
-long *modlong::invs  = new long[MAX+1],
-     *modlong::facts = new long[MAX+1],
-     *modlong::finvs = new long[MAX+1];
+// static変数たち c++17ならinlineでかけるのでclassの中に入れられる(https://ja.cppreference.com/w/cpp/language/static)
+ll *modlong::invs  = new ll[MAX+1];
+ll *modlong::facts = new ll[MAX+1];
+ll *modlong::finvs = new ll[MAX+1];
 
-long modlong::MOD = (long)1e9 + 7;
+ll modlong::MOD = (long)1e9 + 7;
 
 /* snippet ends */
 
