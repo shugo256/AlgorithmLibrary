@@ -16,7 +16,7 @@ Mainly used for [competitive programming](https://en.wikipedia.org/wiki/Competit
 * **union_find_tree.cpp** : Union Find Tree, also known as [disjoint-set data structure](https://en.wikipedia.org/wiki/Disjoint-set_data_structure)
 
 ## Geometry
-* **vec2d.cpp** : 2d vector(math not STL) class. Used for plane figure problems.
+* **geometry2d.cpp** : 2D geometry library used for plane figure problems.
 
 ## Graph
 * **ford_fulkerson.cpp** : [Ford-Fulkerson algorithm](https://en.wikipedia.org/wiki/Ford%E2%80%93Fulkerson_algorithm)
