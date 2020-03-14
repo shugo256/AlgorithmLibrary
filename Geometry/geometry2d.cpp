@@ -1,9 +1,12 @@
 /*
-convex_hull verified on 2020/3/13
-https://atcoder.jp/contests/agc021/submissions/10802949
+convex_hull verified on 2020/3/14
+https://atcoder.jp/contests/agc021/submissions/10812620
 
 cross_point verified on 2020/3/14
-http://judge.u-aizu.ac.jp/onlinejudge/review.jsp?rid=4260596
+https://onlinejudge.u-aizu.ac.jp/status/users/shugo256/submissions/1/CGL_7_E/judge/4260596/C++14
+
+
+Reference: https://ei1333.github.io/luzhiled/snippets/geometry/template.html
 */
 
 #include <iostream>
@@ -46,8 +49,11 @@ namespace std {
 }
 
 namespace geometry2d {
+    
     using value_t = std::value_t;
     using point_t = complex<value_t>;
+
+    const value_t EPS = 1e-8;
 
     // 内積, 外積, 単位ベクトル, なす角のcos
     inline value_t dot(point_t a, point_t b)   { return a.X * b.X + a.Y * b.Y; }
@@ -55,46 +61,75 @@ namespace geometry2d {
     inline point_t unit(point_t p) { return p / abs(p); }
     inline value_t cos_between(point_t a, point_t b) { return dot(unit(a), unit(b)); }
 
+    // 多角形を表す構造体
+    struct polygon : public vector<point_t> {
+        using vector<point_t>::vector;
+        using vector<point_t>::operator[];
+        using vector<point_t>::resize;
+        
+        polygon(int size) : vector((size_t)size) {}
+        inline point_t operator[](int i) const { return (*this)[(size_t)i]; }
+        inline point_t& operator[](int i) { return (*this)[(size_t)i]; }
+        inline void resize(int size) { resize((size_t)size); }
+        inline int size() { return (int)vector<point_t>::size(); }
 
-    // 点集合pointsに対して凸包を作る
-    // ansに凸包の各点(pointsでのインデックス)が入る
-    // 戻り値はansのサイズ
-    int convex_hull(vector<point_t> &points, vector<int> &ans) {
-        int n = (int)points.size();
-        size_t k = 0;
-        vector<size_t> lid((size_t)n), _ans((size_t)n * 2);
+        // 凸包を作る(O(nlogn))
+        // ansに凸包の各点(pointsでのインデックス)が入る
+        // 戻り値は凸包を示すpolygon
+        polygon convex_hull(vector<int> &ans_id) {
+            int n = this->size(), k = 0;
+            vector<int> sorted_id((size_t)n);
+            iota(sorted_id.begin(), sorted_id.end(), 0);
+            sort(sorted_id.begin(), sorted_id.end(), [&](size_t l, size_t r) {
+                return (*this)[l] < (*this)[r];
+            });
 
-        // pointsを辞書順ソートしたときのインデックスの順列を作る
-        iota(lid.begin(), lid.end(), 0);
-        sort(lid.begin(), lid.end(), [&points](size_t l, size_t r) {
-            return points[l] < points[r];
-        });
+            ans_id.resize(2 * (size_t)n);
+            
+            auto ans =    [&](int i) -> point_t& { return (*this)[ans_id[(size_t)i]]; };
+            auto sorted = [&](int i) -> point_t& { return (*this)[sorted_id[(size_t)i]]; };
 
-        // 下側
-        for (int i=0; i<n; i++) {
-            while (k > 1 && cross(points[_ans[k-1]] - points[_ans[k-2]], points[lid[(size_t)i]] - points[_ans[k-1]]) <= 0)
-                k--;
-            _ans[k] = lid[(size_t)i];
-            k++;
+            // lower hull
+            for (int i=0; i<n; i++) {
+                while (k > 1 && cross(ans(k-1) - ans(k-2), sorted(i) - ans(k-1)) <= 0) k--;
+                ans_id[(size_t)k] = sorted_id[(size_t)i];
+                k++;
+            }
+            // upper hull
+            for (int i=n-2, s=(int)k; i>=0; i--) {
+                while ((int)k > s && cross(ans(k-1) - ans(k-2), sorted(i) - ans(k-1)) <= 0) k--;
+                ans_id[(size_t)k] = sorted_id[(size_t)i];
+                k++;
+            }
+            ans_id.resize((size_t)k-1);
+
+            polygon ans_poly(k-1);
+            for (int i=0; i<k-1; i++) ans_poly[i] = ans(i);
+            return ans_poly;
         }
-
-        // 上側
-        for (int i=n-2, s=(int)k; i>=0; i--) {
-            while ((int)k > s && cross(points[_ans[k-1]] - points[_ans[k-2]], points[lid[(size_t)i]] - points[_ans[k-1]]) <= 0)
-                k--;
-            _ans[k] = lid[(size_t)i];
-            k++;
+        // idなしver
+        polygon convex_hull() {
+            vector<int> dummy;
+            return convex_hull(dummy);
         }
+    };
 
-        for (size_t i=0; i<k-1; i++) ans.push_back((int)_ans[i]);
-
-        return (int)k-1;
-    }
 
     // 円を表す構造体
     struct circle {
         point_t c; // center
         value_t r; // radius
+
+        // 点pを内部に含むなら2, 円周上なら1, 外なら0
+        int contains(const point_t p) {
+            value_t d = abs(p - c);
+            if (d < r - EPS)
+                return 2;
+            else if (d < r + EPS)
+                return 1;
+            else
+                return 0;
+        }
     };
 
     pair<point_t, point_t> cross_point(circle a, circle b) {
@@ -112,23 +147,24 @@ namespace geometry2d {
 /* snippet ends */
 
 /* switch define flag for each verification */
-// #define CONVEX_HULL // https://atcoder.jp/contests/agc021/tasks/agc021_b
-#define CROSS_POINT // http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=CGL_7_E&lang=ja
+#define CONVEX_HULL // https://atcoder.jp/contests/agc021/tasks/agc021_b
+// #define CROSS_POINT // https://onlinejudge.u-aizu.ac.jp/courses/library/4/CGL/all/CGL_7_E
 
 int main(){
 #ifdef CONVEX_HULL
     int n;
     cin >> n;
-    vector<geometry2d::point_t> points(n);
+    geometry2d::polygon points(n);
     for (auto &pi:points) cin >> pi;
     vector<int> ch;
-    int m = geometry2d::convex_hull(points, ch);
+    auto hull = points.convex_hull(ch);
+    int m = hull.size();
     double ans[n];
     fill(ans, ans+n, 0);
-    geometry2d::point_t prev = points[ch[m-1]];
+    geometry2d::point_t prev = hull[m-1];
     for (int i=0; i<m; i++) {
-        geometry2d::point_t cur  = points[ch[i]];
-        geometry2d::point_t next = points[ch[(i+1)%m]];
+        geometry2d::point_t cur  = hull[i];
+        geometry2d::point_t next = hull[(i+1)%m];
         ans[ch[i]] = acos(geometry2d::cos_between(cur - prev, next - cur)) / (2 * M_PI);
         prev = cur;
     }
