@@ -5,6 +5,9 @@ https://atcoder.jp/contests/agc021/submissions/10812620
 cross_point verified on 2020/3/14
 https://onlinejudge.u-aizu.ac.jp/status/users/shugo256/submissions/1/CGL_7_E/judge/4260596/C++14
 
+count_overlap(, contains, intersection_points) verified on 2020/3/14
+https://onlinejudge.u-aizu.ac.jp/status/users/shugo256/submissions/1/0090/judge/4263141/C++14
+
 
 Reference: https://ei1333.github.io/luzhiled/snippets/geometry/template.html
 */
@@ -48,12 +51,13 @@ namespace std {
     }
 }
 
+
 namespace geometry2d {
-    
+
     using value_t = std::value_t;
     using point_t = complex<value_t>;
 
-    const value_t EPS = 1e-8;
+    const value_t EPS = 1e-10;
 
     // 内積, 外積, 単位ベクトル, なす角のcos
     inline value_t dot(point_t a, point_t b)   { return a.X * b.X + a.Y * b.Y; }
@@ -132,25 +136,77 @@ namespace geometry2d {
         }
     };
 
-    pair<point_t, point_t> cross_point(circle a, circle b) {
+    // 交点の数
+    // 完全に一致する場合は3を返す
+    // TODO: c++17になったらtupleで返す?
+    inline int intersects(const circle a, const circle b) {
+        double dist = abs(a.c - b.c);
+        double rdif = abs(a.r - b.r);
+        double rsum = a.r + b.r;
+
+        if (dist < EPS && rdif < EPS) return 3;
+        else if (dist < rdif - EPS)   return 0;
+        else if (dist < rdif + EPS)   return 1;
+        else if (dist < rsum - EPS)   return 2;
+        else if (dist < rsum + EPS)   return 1;
+        else                          return 0;
+    }
+
+    // 交点
+    // intersectsが0か3の時は無意味なのでfalseを返す
+    inline bool intersection_point(const circle a, const circle b, point_t &p1, point_t &p2) {
+        int icnt = intersects(a, b);
+        if (icnt == 0 || icnt == 3) return false;
+
         point_t vec_ab = b.c - a.c;
         value_t d = abs(vec_ab);
         value_t theta = arg(vec_ab);
         value_t alpha = acos((a.r * a.r + d * d - b.r * b.r) / (2 * a.r * d));
-        point_t p1 = a.c + polar(a.r, theta + alpha);
-        point_t p2 = a.c + polar(a.r, theta - alpha);
-        return {p1, p2};
+
+        p1 = a.c + polar(a.r, theta + alpha);
+        p2 = a.c + polar(a.r, theta - alpha);
+
+        return true;
+    }
+
+    // 円たちが一番重なってる部分の枚数
+    // O(n^3)
+    inline int count_overlap(vector<circle> &circles) {
+        int ans = 1;
+        size_t n = circles.size();
+        for (size_t i=0; i<n; i++) {
+            for (size_t j=0; j<i; j++) {
+                point_t p1, p2;
+                double dist = abs(circles[i].c - circles[j].c);
+                double rsum = circles[i].r + circles[j].r;      
+                if (!intersection_point(circles[i], circles[j], p1, p2)) {
+                    if (dist > rsum + EPS) continue; // 完全に外側
+                    circle insider = (circles[i].r < circles[j].r ? circles[i] : circles[j]); // 含まれる側
+                    p1 = p2 = insider.c;
+                }
+
+                int cnt1 = 0, cnt2 = 0;
+                for (size_t k=0; k<n; k++) {
+                    if (circles[k].contains(p1)) cnt1++;
+                    if (circles[k].contains(p2)) cnt2++;
+                }
+                ans = max({ans, cnt1, cnt2});
+            }
+        }
+        return ans;
     }
 
 } // namespace geometry2d
 
 /* snippet ends */
 
-/* switch define flag for each verification */
-#define CONVEX_HULL // https://atcoder.jp/contests/agc021/tasks/agc021_b
-// #define CROSS_POINT // https://onlinejudge.u-aizu.ac.jp/courses/library/4/CGL/all/CGL_7_E
 
-int main(){
+/* switch define flags for each verification */
+// #define CONVEX_HULL // https://atcoder.jp/contests/agc021/tasks/agc021_b
+// #define CROSS_POINT // https://onlinejudge.u-aizu.ac.jp/problems/CGL_7_E
+#define COUNT_OVERLAP // https://onlinejudge.u-aizu.ac.jp/problems/0090
+
+int main() {
 #ifdef CONVEX_HULL
     int n;
     cin >> n;
@@ -177,6 +233,21 @@ int main(){
     auto p = geometry2d::cross_point(a, b);
     if (p.first > p.second) swap(p.first, p.second);
     cout << p.first << ' ' << p.second << '\n';
+#endif
+
+#ifdef COUNT_OVERLAP
+    int n; 
+    while (1) {
+        cin >> n;
+        if (n == 0) break;
+        vector<geometry2d::circle> cs(n);
+        for (auto &csi:cs) {
+            double x, y; char dummy;
+            cin >> x >> dummy >> y;
+            csi = {{x, y}, 1};
+        }
+        cout << geometry2d::count_overlap(cs) << '\n';
+    }
 #endif
 
     return 0;
