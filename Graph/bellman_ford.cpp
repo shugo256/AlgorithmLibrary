@@ -1,6 +1,6 @@
 /*
-verified on 2020/3/1
-http://judge.u-aizu.ac.jp/onlinejudge/review.jsp?rid=4221855
+verified on 2020/3/15
+https://onlinejudge.u-aizu.ac.jp/status/users/shugo256/submissions/1/GRL_1_B/judge/4265798/C++14
 */
 
 #include <iostream>
@@ -24,12 +24,7 @@ class BellmanFord {
         dist_t dist;
     };
 
-    int n, // 頂点数
-        input_edge_num; // 辺の数
-
-    bool directed,           // 有向グラフかどうか
-         edge_length_input,  // 入力で辺の長さが与えられるかどうか(ない場合全て1に)
-         zero_indexed_input; // 入力で与えられる頂点が0-indexedかどうか
+    int n; // 頂点数
 
     vector<edge> E;
 
@@ -37,32 +32,12 @@ public:
 
     static const dist_t INF;
 
-    BellmanFord(int _n, int _m, bool _directed=false, bool _edge_length_input=false, bool _zero_indexed_input=false) 
-        : n(_n)
-        , input_edge_num(_m)
-        , directed(_directed)
-        , edge_length_input(_edge_length_input)
-        , zero_indexed_input(_zero_indexed_input) {}
+    BellmanFord(int _n) : n(_n) {}
 
-    BellmanFord(int _n, vector<edge> _E, bool _directed=false)
-        : n(_n)
-        , directed(_directed)
-        , E(_E) {}
+    BellmanFord(int _n, vector<edge> &_E) : n(_n), E(_E.begin(), _E.end()) {}
 
-    inline void add_edge(int from, int to, dist_t dist) {
+    inline void add_edge(int from, int to, dist_t dist=1) {
         E.push_back(edge{from, to, dist});
-        if (!directed) E.push_back(edge{to, from, dist});
-    }
-
-    friend istream &operator>>(istream &is, BellmanFord &in) {
-        dist_t d = 1;
-        for (int i=0, u, v; i<in.input_edge_num; i++) {
-            is >> u >> v;
-            if (in.edge_length_input) is >> d;
-            if (!in.zero_indexed_input) { u--; v--; }
-            in.add_edge(u, v, d);
-        }
-        return is;
     }
 
     struct result {
@@ -121,8 +96,8 @@ const dist_t BellmanFord<dist_t>::INF = numeric_limits<dist_t>::max();
 
 /* Constructers
  *
- * BellmanFord(int _n, int _m, bool _directed=false, bool _edge_length_input=false, bool _zero_indexed_input=false) 
- * BellmanFord(int _n, vector<edge> _E, bool _directed=false)
+ * BellmanFord(n) 
+ * BellmanFord(n, E)
  */
 
 /* snippet ends */
@@ -131,8 +106,11 @@ int main() {
     int n, m, r;
     cin >> n >> m >> r;
 
-    BellmanFord<ll> bf(n, m, true, true, true);
-    cin >> bf;
+    BellmanFord<ll> bf(n);
+    for (int i=0, u, v, d; i<m; i++) {
+        cin >> u >> v >> d;
+        bf.add_edge(u, v, (ll)d);
+    }
     auto res = bf(r);
 
     if (res.negloop) cout << "NEGATIVE CYCLE" << '\n';

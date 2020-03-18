@@ -1,6 +1,6 @@
 /*
-verified on 2020/3/1
-http://judge.u-aizu.ac.jp/onlinejudge/review.jsp?rid=4221790
+verified on 2020/3/15
+https://onlinejudge.u-aizu.ac.jp/status/users/shugo256/submissions/1/GRL_1_A/judge/4265803/C++14
 */
 
 #include <iostream>
@@ -34,33 +34,12 @@ public:
 
     static const dist_t INF;
 
-    Dijkstra(int _n, int _m, bool _directed=false, bool _edge_length_input=false, bool _zero_indexed_input=false) 
-        : n(_n)
-        , input_edge_num(_m)
-        , directed(_directed)
-        , edge_length_input(_edge_length_input)
-        , zero_indexed_input(_zero_indexed_input)
-        , G(new vector<elem_t>[(size_t)n]) {}
+    Dijkstra(int _n) : n(_n), G(new vector<elem_t>[(size_t)n]) {}
 
-    Dijkstra(int _n, vector<elem_t> *_G, bool _directed=false)
-        : n(_n)
-        , directed(_directed)
-        , G(_G) {}
+    Dijkstra(int _n, vector<elem_t>* &_G) : n(_n), G(_G) {}
 
-    inline void add_edge(int from, int to, dist_t dist) {
+    inline void add_edge(int from, int to, dist_t dist=1) {
         G[from].push_back(elem_t{dist, to});
-        if (!directed) G[to].push_back(elem_t{dist, from});
-    }
-
-    friend istream &operator>>(istream &is, Dijkstra &in) {
-        dist_t d = 1;
-        for (int i=0, u, v; i<in.input_edge_num; i++) {
-            is >> u >> v;
-            if (in.edge_length_input) is >> d;
-            if (!in.zero_indexed_input) { u--; v--; }
-            in.add_edge(u, v, d);
-        }
-        return is;
     }
 
     struct result {
@@ -113,8 +92,8 @@ const dist_t Dijkstra<dist_t>::INF = numeric_limits<dist_t>::max();
 
 /* Constructers
  *
- * Dijkstra(int _n, int _m, bool _directed=false, bool _edge_length_input=false, bool _zero_indexed_input=false) 
- * Dijkstra(int _n, vector<elem_t> *_G, bool _directed=false)
+ * Dijkstra(int _n) 
+ * Dijkstra(int _n, vector<elem_t>* &_G)
  */
 
 /* snippet ends */
@@ -122,10 +101,11 @@ const dist_t Dijkstra<dist_t>::INF = numeric_limits<dist_t>::max();
 int main() {
     int n, m, s;
     cin >> n >> m >> s;
-    Dijkstra<ll> dijk(n, m, true, true, true);
-    cin >> dijk;
-    ll *dist_raw = dijk(s);
+    Dijkstra<ll> dijk(n);
+    for (int i=0, u, v, d; i<m; i++) {
+        cin >> u >> v >> d;
+        dijk.add_edge(u, v, d);
+    }
     for (auto &di:dijk(s)) cout << (di < Dijkstra<ll>::INF ? to_string(di) : "INF") << '\n';
-    // for (int i=0; i<n; i++) cerr << dist_raw[i] << '\n';
     return 0;
 }

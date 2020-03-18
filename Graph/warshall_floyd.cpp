@@ -1,6 +1,6 @@
 /*
-verified on 2020/3/1
-http://judge.u-aizu.ac.jp/onlinejudge/review.jsp?rid=4222399
+verified on 2020/3/15
+https://onlinejudge.u-aizu.ac.jp/status/users/shugo256/submissions/1/GRL_1_C/judge/4265812/C++14
 */
 
 #include <iostream>
@@ -18,12 +18,7 @@ using ll = long long;
 template<typename dist_t>
 class WarshallFloyd {
 
-    int n, // 頂点数
-        input_edge_num; // 辺の数
-
-    bool directed,           // 有向グラフかどうか
-         edge_length_input,  // 入力で辺の長さが与えられるかどうか(ない場合全て1に)
-         zero_indexed_input; // 入力で与えられる頂点が0-indexedかどうか
+    int n; // 頂点数
 
     vector<vector<dist_t>> d;
 
@@ -32,24 +27,18 @@ public:
     static const dist_t INF;
     static const string INF_STR;
 
-    WarshallFloyd(int _n, int _m, bool _directed=false, bool _edge_length_input=false, bool _zero_indexed_input=false) 
+    WarshallFloyd(int _n) 
         : n(_n)
-        , input_edge_num(_m)
-        , directed(_directed)
-        , edge_length_input(_edge_length_input)
-        , zero_indexed_input(_zero_indexed_input)
         , d((size_t)n, vector<dist_t>((size_t)n, INF)) {
         for (size_t i=0; i<(size_t)n; i++) d[i][i] = 0;
     }
 
-    WarshallFloyd(int _n, vector<vector<dist_t>> &_d, bool _directed=false)
+    WarshallFloyd(int _n, vector<vector<dist_t>> &_d)
         : n(_n)
-        , directed(_directed)
         , d(_d) {}
 
     inline void add_edge(int from, int to, dist_t dist) {
         d[(size_t)from][(size_t)to] = dist;
-        if (!directed) d[(size_t)to][(size_t)from] = dist;
     }
 
     friend istream &operator>>(istream &is, WarshallFloyd &in) {
@@ -104,8 +93,8 @@ const string WarshallFloyd<dist_t>::INF_STR = "INF";
 
 /* Constructers
  *
- * WarshallFloyd(int _n, int _m, bool _directed=false, bool _edge_length_input=false, bool _zero_indexed_input=false) 
- * WarshallFloyd(int _n, vector<vector<dist_t>> _d, bool _directed=false)
+ * WarshallFloyd(int _n) 
+ * WarshallFloyd(int _n, vector<vector<dist_t>> &_d)
  */
 
 /* snippet ends */
@@ -113,8 +102,11 @@ const string WarshallFloyd<dist_t>::INF_STR = "INF";
 int main() {
     int n, m;
     cin >> n >> m;
-    WarshallFloyd<ll> wf(n, m, true, true, true);
-    cin >> wf;
+    WarshallFloyd<ll> wf(n);
+    for (int i=0, u, v, d; i<m; i++) {
+        cin >> u >> v >> d;
+        wf.add_edge(u, v, d);
+    }
     if (wf())
         cout << "NEGATIVE CYCLE" << '\n';
     else
