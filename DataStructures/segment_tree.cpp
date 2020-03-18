@@ -16,72 +16,63 @@ using namespace std;
 
 #include <functional>
 #include <limits>
+#include <unordered_map>
 
-#define ASSIGN_I [](T &ival, T x) { ival = x; }  // i番目にxを代入(点更新のデフォルト)
+#define ASSIGN_I [](elem_t &ival, elem_t x) { ival = x; }  // i番目にxを代入(点更新のデフォルト)
 
-template <typename T>
+template <
+    typename elem_t, 
+    typename op_func_t = function<elem_t(elem_t, elem_t)>, 
+    typename up_func_t = function<void(elem_t&, elem_t)>
+>
 class SegmentTree {
-    int n;                       // 葉の数
-    T def;                 // 初期値 && 単位元
-    vector<T> tree;              // 本体 
+    size_t n;            // 葉の数(指定した要素数以上で最小の2べき)
+    const elem_t def;    // 初期値 && 単位元
+    vector<elem_t> tree; // 本体 
 
-    using op_func_t = function<T(T, T)>;
-    using up_func_t = function<void(T&, T)>;
+    op_func_t op_func;   // 区間クエリで使う処理
+    up_func_t up_func;   // 点更新で使う処理 ただの変更の他、i番目にxをたすみたいなこともできる
 
-    op_func_t op_func; // 区間クエリで使う処理
-    up_func_t up_func; // 点更新で使う処理 ただの変更の他、i番目にxをたすみたいなこともできる
-
-    // 区間[a, b)の総和(と言うか総operation(は？))
-    // ノードk=[l, r)を見ている
-    T _query(int a, int b, int k, int l, int r) {
-        if (r <= a || b <= l) return def;            // 全く交差しない場合
-        if (a <= l && r <= b) return tree[(size_t)k]; // 完全に包含される場合
-        T vl = _query(a, b, k * 2 + 1, l, (l + r) / 2),
-          vr = _query(a, b, k * 2 + 2, (l + r) / 2, r);
-        return op_func(vl, vr);
-    }
+    // stringでモード指定できるように
+    // TODO: Use 'inline static' as soon as C++17 become available in AtCoder (and AOJ).
+    //       I personally don't like defining static vars outside.
+    static unordered_map<string, elem_t> def_map;
+    static unordered_map<string, op_func_t> oper_map;
 
   public:
-    SegmentTree(int _n, T _def, op_func_t _op_func, up_func_t _up_func = ASSIGN_I)
+    SegmentTree(int _n, elem_t _def, op_func_t _op_func, up_func_t _up_func = ASSIGN_I)
         : def(_def), op_func(_op_func), up_func(_up_func)  {
         n = 1;
-        while (n < _n) n <<= 1;
-        tree = vector<T>((size_t)(2*n - 1), def);
+        while (n < (size_t)_n) n <<= 1;
+        tree = vector<elem_t>(n*2, def);
     }
 
     //よく使うやつら min, max, sum
-    SegmentTree(int _n, T _def, string mode, up_func_t _up_func = ASSIGN_I)
-        : SegmentTree(
-            _n, 
-            _def,
-            mode == "max" ? [](T l, T r) { return max(l, r); } :
-           (mode == "min" ? [](T l, T r) { return min(l, r); } :
-                            [](T l, T r) { return l + r; }), // sum
-            _up_func
-        ) {}
+    SegmentTree(int _n, elem_t _def, string mode, up_func_t _up_func = ASSIGN_I)
+        : SegmentTree(_n, _def, oper_map[mode], _up_func) {}
 
     SegmentTree(int _n, string mode, up_func_t _up_func = ASSIGN_I)
-        : SegmentTree(
-            _n, 
-            mode == "max" ? numeric_limits<T>::lowest() : 
-           (mode == "min" ? numeric_limits<T>::max() :
-                            0), // sum
-            mode,
-            _up_func
-        ) {}
+        : SegmentTree(_n, def_map[mode], oper_map[mode], _up_func) {}
 
-    template <typename ID>
-    void update(ID i, T x) {
-        i += (ID)n - 1;
-        up_func(tree[(size_t)i], x);
-        while (i > 0) {
-            i = (i - 1) / 2;
-            tree[(size_t)i] = op_func(tree[(size_t)(i * 2 + 1)], tree[(size_t)(i * 2 + 2)]);
+    inline void update(int _i, elem_t x) {
+        size_t i = (size_t)_i;
+        i += n;
+        up_func(tree[i], x);
+        while (i /= 2) {
+            tree[i] = op_func(tree[(i * 2)], tree[(i * 2 + 1)]);
         }
     }
 
-    template <typename ID1, typename ID2>
-    T query(ID1 a, ID2 b) { return _query((int)a, (int)b, 0, 0, n); }
+    // 区間[l, r)の総和(と言うか総operation(は？))
+    inline elem_t query(int _l, int _r) {
+        size_t l = (size_t)_l, r = (size_t)_r;
+        elem_t res_l = def, res_r = def;
+        for (l += n, r += n; l < r; l >>= 1, r >>= 1) {
+            if (l & 1) res_l = op_func(res_l, tree[l++]);
+            if (r & 1) res_r = op_func(tree[--r], res_r);
+        }
+        return op_func(res_l, res_r);
+    }
 
     void print_tree() {
         size_t next = 0, size = (size_t)(2 * n - 1);
@@ -95,10 +86,24 @@ class SegmentTree {
         }
     }
 
-    auto begin() { return tree.begin() + n - 1; }
+    auto begin() { return tree.begin() + n; }
     auto end() { return tree.end(); }
 
-    T operator[](int i) { return tree[ (size_t)(i + n - 1) ]; }
+    elem_t operator[](int i) { return tree[ (size_t)(i + n) ]; }
+};
+
+template<typename elem_t, typename op_func_t, typename up_func_t> 
+unordered_map<string, elem_t> SegmentTree<elem_t, op_func_t, up_func_t>::def_map{
+    {"max", numeric_limits<elem_t>::lowest()},
+    {"min", numeric_limits<elem_t>::max()},
+    {"sum", static_cast<elem_t>(0)}
+};
+
+template<typename elem_t, typename op_func_t, typename up_func_t> 
+unordered_map<string, op_func_t> SegmentTree<elem_t, op_func_t, up_func_t>::oper_map{
+    {"max", [](elem_t l, elem_t r) { return max(l, r); }},
+    {"min", [](elem_t l, elem_t r) { return min(l, r); }},
+    {"sum", [](elem_t l, elem_t r) { return l + r; }}
 };
 /*
 コンストラクタ
@@ -112,10 +117,10 @@ SegmentTree(n, mode, [up_func])
 int main() {
     int n, q;
     cin >> n >> q;
-    SegmentTree<long long> sg(n, (1l << 31) - 1, "min");
+    SegmentTree<int> sg(n, "min");
     for (int i=0; i<q; i++) {
         bool com;
-        long long x, y;
+        int x, y;
         cin >> com >> x >> y;
         if (com) cout << sg.query(x, y+1) << '\n';
         else sg.update(x, y);
