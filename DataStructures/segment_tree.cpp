@@ -47,7 +47,6 @@ class SegmentTree {
         tree = vector<elem_t>(n*2, def);
     }
 
-    //よく使うやつら min, max, sum
     SegmentTree(int _n, elem_t _def, string mode, up_func_t _up_func = ASSIGN_I)
         : SegmentTree(_n, _def, oper_map[mode], _up_func) {}
 
