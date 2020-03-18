@@ -34,8 +34,8 @@ class SegmentTree {
     up_func_t up_func;   // 点更新で使う処理 ただの変更の他、i番目にxをたすみたいなこともできる
 
     // stringでモード指定できるように
-    // TODO: Use 'inline static' as soon as C++17 become available in AtCoder (and AOJ).
-    //       I personally don't like defining static vars outside.
+    // TODO: Change here to 'inline static' as soon as C++17 become available in AtCoder (and AOJ).
+    //       I personally don't like initializing static vars outside.
     static unordered_map<string, elem_t> def_map;
     static unordered_map<string, op_func_t> oper_map;
 
