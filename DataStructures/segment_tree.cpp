@@ -1,9 +1,9 @@
 /*
-verified on 2019/8/31
-http://judge.u-aizu.ac.jp/onlinejudge/review.jsp?rid=3840559
+older version verified on 2020/2/3
+https://onlinejudge.u-aizu.ac.jp/status/users/shugo256/submissions/4/DSL_2_A/judge/4152203/C++14
 
-fix up_func, verified on 2020/2/3
-http://judge.u-aizu.ac.jp/onlinejudge/review.jsp?rid=4152203
+current version (slightly faster) verified on 2020/3/18
+https://onlinejudge.u-aizu.ac.jp/status/users/shugo256/submissions/1/DSL_2_A/judge/4273192/C++14
 */
 
 #include <iostream>
