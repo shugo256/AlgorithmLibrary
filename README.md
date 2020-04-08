@@ -3,7 +3,7 @@
 ## Notes
 
 * This library is written for [competitive programming](https://en.wikipedia.org/wiki/Competitive_programming).
-* It's made to be copied and pasted to subbmissions during the contests, so there is no header files.
+* It's made to be copied and pasted to subbmissions during a contest, so there is no header files.
 * Competitive programming is, so to speak, a coding race, so I use `using namespace std` in each file.
     * I know this is an evil thing to do, but I need to do this in order to code faster.
 
