@@ -1,6 +1,8 @@
 /*
 verified on 2020/3/12
 http://judge.u-aizu.ac.jp/onlinejudge/review.jsp?rid=4256490
+modPow verified on 2020/4/13
+https://atcoder.jp/contests/abc149/submissions/11899217
 */
 #include <iostream>
 
@@ -154,6 +156,8 @@ public:
     }
 };
 
+// べき乗
+inline modlong modPow(ll n, ll k) { return modlong(n).pow(k); }
 // コンビネーション
 inline modlong modComb(ll n, ll k) { return modlong(n).comb(k); }
 // 階乗
@@ -165,6 +169,7 @@ ll *modlong::facts = new ll[MAX+1];
 ll *modlong::finvs = new ll[MAX+1];
 
 ll modlong::MOD = (ll)1e9 + 7;
+
 
 /* snippet ends */
 
